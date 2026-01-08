@@ -1,83 +1,319 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link th:href="@{/bootstrap.css}" rel="stylesheet" type="text/css">
-	<link th:href="@{/styles.css}" rel="stylesheet" type="text/css">
-	<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.min.css" rel="stylesheet">
-	<!-- Si se carga el contenido de bootstrap desde la web del desarrollador,
-		 el nav no funciona de manera correcta. No se despliega el dropdown.
-	 	 Se cargaron los archivos localmente en la carpeta static. -->
+    <link th:href="@{/bootstrap.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/styles.css}" rel="stylesheet" type="text/css">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons para mejorar visualmente -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <title>Sistema de ventas 5G</title>
+    <style>
+        /* Estilos puramente visuales - Sin alterar funcionalidad */
+        .navbar-5g {
+            background: linear-gradient(135deg, #ffcc00 0%, #ffd633 100%);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 0.5rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-5g:hover {
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .logo-container {
+            background: white;
+            border-radius: 12px;
+            padding: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .logo-container:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .logo-img {
+            border-radius: 6px;
+            border: 2px solid #fff;
+        }
+
+        .navbar-brand {
+            color: #1a3a8f !important;
+            font-weight: 700;
+            font-size: 1.5rem;
+            padding-left: 5%;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+        }
+
+        .nav-link {
+            color: #1a3a8f !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            margin: 0 2px;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .dropdown-menu {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            padding: 8px 0;
+            margin-top: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .dropdown-item {
+            padding: 0.6rem 1.25rem;
+            color: #333;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dropdown-item:hover {
+            background: #f8f9fa;
+            padding-left: 1.5rem;
+            color: #1a3a8f;
+        }
+
+        .btn-outline-success {
+            border: 2px solid #198754;
+            color: #198754;
+            font-weight: 500;
+            padding: 0.4rem 1rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-outline-success:hover {
+            background: #198754;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(25, 135, 84, 0.2);
+        }
+
+        .navbar-toggler {
+            border: 2px solid #1a3a8f;
+            padding: 0.25rem 0.5rem;
+        }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(26, 58, 143, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        .dropdown-divider {
+            margin: 8px 0;
+            opacity: 0.2;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
+            .nav-link {
+                margin: 2px 0;
+            }
+
+            .dropdown-menu {
+                box-shadow: none;
+                border-radius: 0;
+                border: none;
+                background: rgba(255, 255, 255, 0.95);
+            }
+        }
+    </style>
 </head>
+
 <body>
-	<nav class="navbar navbar-expand-lg bg-warning">
-	  <div class="container-fluid">
-		<img src="https://yt3.googleusercontent.com/ytc/AIdro_n_lEMkYL-xAFlR56obORVzE6NFySBgnczOqV4-ft41ig=s900-c-k-c0x00ffffff-no-rj" alt="Grupo 5G Logo" height="80" width="80" style="margin-left: 1%;">
-	    <a class="navbar-brand" style="padding-left: 5%;">Sistema de ventas 5G</a>
-	    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-	      <span class="navbar-toggler-icon"></span>
-	    </button>
-	    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-	      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-	        <li class="nav-item dropdown">
-	          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-	            Clientes
-	          </a>
-	          <ul class="dropdown-menu">
-	            <li><a class="dropdown-item" th:href="@{/Cliente/insertarCliente}">Registrar cliente</a></li>
-	            <li><a class="dropdown-item" th:href="@{/Cliente/listadoCliente}">Listado de clientes</a></li>
-	            <li><hr class="dropdown-divider"></li>
-	          </ul>
-	        </li>
-			<li class="nav-item dropdown">
-			  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-			    Usuarios
-			  </a>
-			  <ul class="dropdown-menu">
-			    <li><a class="dropdown-item" th:href="@{/Usuario/insertarUsuario}">Registrar usuario</a></li>
-			    <li><a class="dropdown-item" th:href="@{/Usuario/listadoUsuario}">Listado de usuarios</a></li>
-			    <li><hr class="dropdown-divider"></li>
-			  </ul>
-			</li>
-			<li class="nav-item dropdown">
-			  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-			    Proveedores
-			  </a>
-			  <ul class="dropdown-menu">
-			    <li><a class="dropdown-item" th:href="@{/Proveedor/insertarProveedor}">Registrar proveedor</a></li>
-			    <li><a class="dropdown-item" th:href="@{/Proveedor/listadoProveedor}">Listado de proveedores</a></li>
-			    <li><hr class="dropdown-divider"></li>
-			  </ul>
-			</li>
-			<li class="nav-item dropdown">
-			  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-			    Producto
-			  </a>
-			  <ul class="dropdown-menu">
-			    <li><a class="dropdown-item" th:href="@{/Producto/insertarProducto}">Registrar producto</a></li>
-			    <li><a class="dropdown-item" th:href="@{/Producto/listadoProducto}">Listado de productos</a></li>
-			    <li><hr class="dropdown-divider"></li>
-			  </ul>
-			</li>
-			<li class="nav-item dropdown">
-			  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-			    Factura
-			  </a>
-			  <ul class="dropdown-menu">
-			    <li><a class="dropdown-item" th:href="@{/Factura/insertarFactura}">Registrar factura</a></li>
-			    <li><a class="dropdown-item" th:href="@{/Factura/listadoFactura}">Listado de facturas</a></li>
-			    <li><hr class="dropdown-divider"></li>
-			  </ul>
-			</li>
-	      </ul>
-	      <form class="d-flex" role="search" style="margin-right: 3%;">
-			<div style="margin-left: auto;">
-		        <a class="btn btn-outline-success" th:href="@{http://localhost:8080/login}" >Login</a>
-				<a class="btn btn-outline-success" th:href="@{http://localhost:8080/logout}" >Log Out</a>
-			</div> 	
-	      </form>
-	    </div>
-	  </div>
-	</nav>
+    <nav class="navbar navbar-expand-lg navbar-5g">
+        <div class="container-fluid">
+            <!-- Logo mejorado -->
+            <div class="logo-container" style="margin-left: 1%;">
+                <img src="https://yt3.googleusercontent.com/ytc/AIdro_n_lEMkYL-xAFlR56obORVzE6NFySBgnczOqV4-ft41ig=s900-c-k-c0x00ffffff-no-rj"
+                    alt="Grupo 5G Logo" height="80" width="80" class="logo-img">
+            </div>
+
+            <!-- Marca con mejor tipografía -->
+            <a class="navbar-brand" style="padding-left: 3%;">
+                <i class="bi bi-shop-window me-2"></i>
+                Sistema de ventas 5G
+            </a>
+
+            <!-- Botón toggle (sin cambios funcionales) -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Contenido del navbar (estructura original preservada) -->
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                    <!-- Clientes con ícono -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            <i class="bi bi-people-fill me-1"></i>
+                            Clientes
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" th:href="@{/Cliente/insertarCliente}">
+                                    <i class="bi bi-person-plus text-success me-2"></i>
+                                    Registrar cliente
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" th:href="@{/Cliente/listadoCliente}">
+                                    <i class="bi bi-list-columns text-primary me-2"></i>
+                                    Listado de clientes
+                                </a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Usuarios con ícono -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            <i class="bi bi-person-badge me-1"></i>
+                            Usuarios
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" th:href="@{/Usuario/insertarUsuario}">
+                                    <i class="bi bi-person-add text-success me-2"></i>
+                                    Registrar usuario
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" th:href="@{/Usuario/listadoUsuario}">
+                                    <i class="bi bi-people text-primary me-2"></i>
+                                    Listado de usuarios
+                                </a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Proveedores con ícono -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            <i class="bi bi-truck me-1"></i>
+                            Proveedores
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" th:href="@{/Proveedor/insertarProveedor}">
+                                    <i class="bi bi-building-add text-success me-2"></i>
+                                    Registrar proveedor
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" th:href="@{/Proveedor/listadoProveedor}">
+                                    <i class="bi bi-buildings text-primary me-2"></i>
+                                    Listado de proveedores
+                                </a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Producto con ícono -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            <i class="bi bi-box-seam me-1"></i>
+                            Producto
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" th:href="@{/Producto/insertarProducto}">
+                                    <i class="bi bi-plus-circle text-success me-2"></i>
+                                    Registrar producto
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" th:href="@{/Producto/listadoProducto}">
+                                    <i class="bi bi-grid-3x3-gap text-primary me-2"></i>
+                                    Listado de productos
+                                </a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Factura con ícono -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            <i class="bi bi-receipt me-1"></i>
+                            Factura
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" th:href="@{/Factura/insertarFactura}">
+                                    <i class="bi bi-file-earmark-plus text-success me-2"></i>
+                                    Registrar factura
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" th:href="@{/Factura/listadoFactura}">
+                                    <i class="bi bi-files text-primary me-2"></i>
+                                    Listado de facturas
+                                </a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                        </ul>
+                    </li>
+
+                </ul>
+
+                <!-- Botones de autenticación (estructura original preservada) -->
+                <form class="d-flex" role="search" style="margin-right: 3%;">
+                    <div style="margin-left: auto;">
+                        <a class="btn btn-outline-success me-2" th:href="@{http://localhost:8080/login}">
+                            <i class="bi bi-box-arrow-in-right me-1"></i>
+                            Login
+                        </a>
+                        <a class="btn btn-outline-success" th:href="@{http://localhost:8080/logout}">
+                            <i class="bi bi-box-arrow-right me-1"></i>
+                            Log Out
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Scripts (los mismos que antes) -->
+    <!-- Nota: Bootstrap se carga localmente según tu comentario original -->
+</body>
+
+</html>

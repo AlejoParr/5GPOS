@@ -1,80 +1,377 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="https://www.thymeleaf.org/">
+<html lang="es" xmlns="https://www.thymeleaf.org/">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
-    <title>Listado de clientes</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <title>Listado de Usuarios - 5GPOS</title>
+    <style>
+		/* Agregar animación de carga para las filas de la tabla */
+		@keyframes fadeInUp {
+		    from {
+		        opacity: 0;
+		        transform: translateY(10px);
+		    }
+		    to {
+		        opacity: 1;
+		        transform: translateY(0);
+		    }
+		}
+
+		.tabla-usuarios tbody tr {
+		    transition: all 0.2s ease;
+		    border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+		    animation: fadeInUp 0.5s ease forwards;
+		    opacity: 0; /* Comienza invisible para la animación */
+		}
+
+		/* Aplicar un delay escalonado a cada fila */
+		.tabla-usuarios tbody tr:nth-child(1) { animation-delay: 0.1s; }
+		.tabla-usuarios tbody tr:nth-child(2) { animation-delay: 0.2s; }
+		.tabla-usuarios tbody tr:nth-child(3) { animation-delay: 0.3s; }
+		.tabla-usuarios tbody tr:nth-child(4) { animation-delay: 0.4s; }
+		.tabla-usuarios tbody tr:nth-child(5) { animation-delay: 0.5s; }
+		.tabla-usuarios tbody tr:nth-child(6) { animation-delay: 0.6s; }
+		.tabla-usuarios tbody tr:nth-child(7) { animation-delay: 0.7s; }
+		.tabla-usuarios tbody tr:nth-child(8) { animation-delay: 0.8s; }
+		.tabla-usuarios tbody tr:nth-child(9) { animation-delay: 0.9s; }
+		.tabla-usuarios tbody tr:nth-child(10) { animation-delay: 1.0s; }
+
+		/* Para la fila del estado vacío, no queremos animación */
+		.tabla-usuarios tbody tr:has(.estado-vacio) {
+		    animation: none;
+		    opacity: 1;
+		}
+		
+        /* Estilos vista de clientes */
+        .usuarios-container {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: calc(100vh - 120px);
+            padding-top: 2rem;
+            padding-bottom: 3rem;
+        }
+
+        .titulo-principal {
+            color: #1a3a8f;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 3px solid #ffcc00;
+            display: inline-block;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .tabla-usuarios {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .tabla-usuarios thead {
+            background: linear-gradient(135deg, #1a3a8f 0%, #2d5cc2 100%);
+            color: white;
+        }
+
+        .tabla-usuarios th {
+            font-weight: 600;
+            padding: 1rem 1.25rem;
+            border: none;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tabla-usuarios tbody tr {
+            transition: all 0.2s ease;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+        }
+
+        .tabla-usuarios tbody tr:hover {
+            background-color: rgba(26, 58, 143, 0.03);
+            transform: translateX(4px);
+        }
+
+        .tabla-usuarios td {
+            padding: 1rem 1.25rem;
+            vertical-align: middle;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .badge-id {
+            background: rgba(26, 58, 143, 0.1);
+            color: #1a3a8f;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .badge-rol {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            border: 1px solid rgba(40, 167, 69, 0.2);
+        }
+
+        .badge-rol-admin {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+            border-color: rgba(220, 53, 69, 0.2);
+        }
+
+        .btn-accion {
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            min-width: 100px;
+            border: 2px solid transparent;
+        }
+
+        .btn-borrar {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            border-color: #dc3545;
+        }
+
+        .btn-borrar:hover {
+            background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+        }
+
+        .btn-editar {
+            background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+            color: #212529;
+            border-color: #ffc107;
+        }
+
+        .btn-editar:hover {
+            background: linear-gradient(135deg, #e0a800 0%, #d39e00 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+        }
+
+        .acciones-cell {
+            min-width: 180px;
+        }
+
+        /* Estado para lista vacía */
+        .estado-vacio {
+            padding: 4rem 2rem;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 12px;
+            margin: 2rem auto;
+            max-width: 600px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .icono-vacio {
+            font-size: 4rem;
+            color: #6c757d;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .email-cell {
+            word-break: break-word;
+            max-width: 250px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .tabla-usuarios {
+                font-size: 0.9rem;
+            }
+
+            .btn-accion {
+                min-width: auto;
+                padding: 0.4rem 0.8rem;
+                font-size: 0.85rem;
+            }
+
+            .acciones-cell {
+                min-width: 150px;
+            }
+
+            .email-cell {
+                max-width: 150px;
+            }
+			
+        }
+    </style>
 </head>
-	<body>
-	<div th:insert = "~{header}"></div>
-	<div  class="container" style="text-align: center;">
-		<h1>Listado de usuarios registrados</h1>
-		<br>
-		<table 	class="table table-primary table-primary">
-			<thead>
-				<tr>
-					<th>ID</th>
-					<th>Nombre</th>
-					<th>Username</th>
-					<th>Permisos</th>
-					<th>e-mail</th>
-					<th>Opciones</th>
-				</tr>
-			</thead>
-			<tbody>	<!-- Usando las plantillas de Thymeleaf, se asignan los valores de la
-						 cada fila en la base de datos a las filas de la tabla. Va a guardar
-						 la información en la variable cliente, y luego se accederá a los atrbutos
-						 de la variable para ser asignados a la fila correspondiente. -->
-				<tr th:each="us: ${Usuario}">
-					<td th:text="${us.id}"></td>
-					<td th:text="${us.nombre_completo}"></td>
-					<td th:text="${us.username}"></td>
-					<td th:text="${us.rol}"></td>
-					<td th:text="${us.email}"></td>
-					<td>
-						<i th:onclick="borrar('[[${us.id}]]')" class="btn btn-danger" aria-hidden="true" style="margin-left: 15%;">Borrar</i>
-						<a th:href="@{/Usuario/actualizarUsuario/} + ${us.id}" class="btn btn-warning" style="margin-left: 15%;">Editar</a>
-					</td>
-				</tr>
-			</tbody>
-			</table>
-		</div>
-		<script>
-			function borrar(id){
-				const swalWithBootstrapButtons = Swal.mixin({
-				  customClass: {
-				    confirmButton: "btn btn-success",
-				    cancelButton: "btn btn-danger"
-				  },
-				  buttonsStyling: false
-				});
-				swalWithBootstrapButtons.fire({
-				  title: "Está seguro de eliminar este usuario?",
-				  text: "Este cambio no podrá deshacerse.",
-				  icon: "warning",
-				  showCancelButton: true,
-				  confirmButtonText: "Sí, borrar.",
-				  cancelButtonText: "No, cancelar",
-				  reverseButtons: true
-				}).then((result) => {
-				  if (result.isConfirmed) {
-					//Redirección una vez se borra el archivo
-					location.href ="/Usuario/borrarUsuario/" + id;
-				  } else if (
-				    result.dismiss === Swal.DismissReason.cancel
-				  ) {
-				    swalWithBootstrapButtons.fire({
-				      title: "Borrado cancelado.",
-				      text: "No se eliminó el archivo",
-				      icon: "error"
-				    });
-				  }
-				});
-			}
-		</script>
-		<div th:insert = "~{footer}"></div>
-	</body>
-	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
+
+<body>
+    <div th:insert="~{header}"></div>
+
+    <div class="usuarios-container">
+        <div class="container">
+            <div
+                class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
+                <div>
+                    <h1 class="titulo-principal">
+                        <i class="bi bi-people-fill me-2"></i>
+                        Listado de Usuarios
+                    </h1>
+                </div>
+
+                <div class="mt-3 mt-md-0">
+                    <span class="badge bg-primary rounded-pill p-2 px-3">
+                        <i class="bi bi-person-check me-1"></i>
+                        <span th:text="${#lists.size(Usuario)}">0</span> usuarios
+                    </span>
+                </div>
+            </div>
+
+            <!-- Tabla congruente con la de clientes -->
+            <div class="tabla-usuarios">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th style="width: 80px;">ID</th>
+                            <th>Nombre Completo</th>
+                            <th>Username</th>
+                            <th>Permisos</th>
+                            <th>e-mail</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Estado vacío (aparece solo si no hay usuarios) -->
+                        <tr th:if="${#lists.isEmpty(Usuario)}">
+                            <td colspan="6">
+                                <div class="estado-vacio">
+                                    <i class="bi bi-person-x icono-vacio"></i>
+                                    <h4 class="h5 text-muted mb-2">No hay usuarios registrados</h4>
+                                    <p class="text-muted mb-4">Comienza agregando tu primer usuario al sistema</p>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr th:each="us: ${Usuario}">
+                            <td>
+                                <span class="badge-id">#<span th:text="${us.id}"></span></span>
+                            </td>
+                            <td>
+                                <div class="fw-semibold" th:text="${us.nombre_completo}"></div>
+                                <small class="text-muted">Usuario activo</small>
+                            </td>
+                            <td th:text="${us.username}"></td>
+                            <td>
+                                <span th:class="${us.rol == 'ADMIN' ? 'badge-rol badge-rol-admin' : 'badge-rol'}"
+                                    th:text="${us.rol}"></span>
+                            </td>
+                            <td class="email-cell">
+                                <a href="mailto:[[${us.email}]]" class="text-decoration-none text-primary">
+                                    <i class="bi bi-envelope me-1"></i>
+                                    <span th:text="${us.email}"></span>
+                                </a>
+                            </td>
+                            <td class="text-center acciones-cell">
+                                <button type="button" th:onclick="borrar('[[${us.id}]]')"
+                                    class="btn-accion btn-borrar me-2">
+                                    <i class="bi bi-trash3"></i>
+                                    Borrar
+                                </button>
+
+                                <a th:href="@{/Usuario/actualizarUsuario/} + ${us.id}" class="btn-accion btn-editar">
+                                    <i class="bi bi-pencil-square"></i>
+                                    Editar
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-4 d-flex justify-content-between align-items-center text-muted small">
+                <div th:if="${not #lists.isEmpty(Usuario)}" class="card-footer bg-transparent border-top-0 pt-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Total: <span th:text="${#lists.size(Usuario)}"></span> usuario(s)
+                        </small>
+                        <small class="text-muted">
+                            <i class="bi bi-clock me-1"></i>
+                            Actualizado: <span
+                                th:text="${#dates.format(#dates.createNow(), 'dd/MM/yyyy HH:mm')}"></span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function borrar(id) {
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: "btn-accion btn-borrar mx-2",
+                    cancelButton: "btn-accion me-2",
+                    cancelButtonColor: '#6c757d'
+                },
+                buttonsStyling: false
+            });
+
+            swalWithBootstrapButtons.fire({
+                title: "¿Está seguro de eliminar este usuario?",
+                html: `
+                    <div class="text-start">
+                        <p>Esta acción eliminará permanentemente el usuario <strong>#${id}</strong> del sistema.</p>
+                        <div class="alert alert-warning border-warning mt-3">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            <strong>Advertencia:</strong> Este cambio no podrá deshacerse.
+                        </div>
+                    </div>
+                `,
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: '<i class="bi bi-trash3 me-2"></i>Sí, eliminar',
+                cancelButtonText: '<i class="bi bi-x-circle me-2"></i>No, cancelar',
+                reverseButtons: true,
+                backdrop: 'rgba(0,0,0,0.4)',
+                showClass: {
+                    popup: 'animate__animated animate__fadeInDown'
+                },
+                hideClass: {
+                    popup: 'animate__animated animate__fadeOutUp'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    location.href = "/Usuario/borrarUsuario/" + id;
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    swalWithBootstrapButtons.fire({
+                        title: "Eliminación cancelada",
+                        text: "El usuario se mantiene en el sistema.",
+                        icon: "info",
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                }
+            });
+        }
+    </script>
+
+    <div th:insert="~{footer}"></div>
+
+    <!-- Scripts Bootstrap (versión actualizada para congruencia) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
 </html>
