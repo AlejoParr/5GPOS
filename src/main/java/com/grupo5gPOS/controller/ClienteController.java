@@ -60,5 +60,3 @@ public class ClienteController {
 		return "redirect:/Cliente/listadoCliente"; 
 	}
 }
-
-
