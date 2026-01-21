@@ -1,69 +1,606 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="https://www.thymeleaf.org/">
+<html lang="es" xmlns="https://www.thymeleaf.org/">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
-    <title>Desactivar producto</title>
-    
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+	<title>Cambiar estado de producto - 5GPOS</title>
+	<style>
+		/* Variables de color consistentes con la otra vista */
+		:root {
+			--primary-color: #1a3a8f;
+			--primary-light: #2d5cc2;
+			--secondary-color: #ffcc00;
+			--danger-color: #dc3545;
+			--danger-dark: #c82333;
+			--warning-color: #ffc107;
+			--warning-dark: #e0a800;
+			--success-color: #28a745;
+			--success-light: rgba(40, 167, 69, 0.1);
+			--gray-color: #6c757d;
+			--gray-dark: #5a6268;
+			--light-bg: #f8f9fa;
+			--border-radius: 12px;
+			--box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+			--transition: all 0.3s ease;
+		}
+
+		/* Animaciones consistentes */
+		@keyframes fadeInUp {
+			from {
+				opacity: 0;
+				transform: translateY(10px);
+			}
+
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		@keyframes countPop {
+			0% {
+				opacity: 0;
+				transform: scale(0.8);
+			}
+
+			70% {
+				transform: scale(1.1);
+			}
+
+			100% {
+				opacity: 1;
+				transform: scale(1);
+			}
+		}
+
+		@keyframes fadeInScale {
+			from {
+				opacity: 0;
+				transform: scale(0.9);
+			}
+
+			to {
+				opacity: 1;
+				transform: scale(1);
+			}
+		}
+
+		body {
+			background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+			min-height: 100vh;
+			font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+		}
+
+		.productos-container {
+			min-height: calc(100vh - 120px);
+			padding-top: 2rem;
+			padding-bottom: 3rem;
+		}
+
+		.titulo-principal {
+			color: var(--primary-color);
+			font-weight: 700;
+			margin-bottom: 1.5rem;
+			padding-bottom: 0.75rem;
+			border-bottom: 3px solid var(--secondary-color);
+			display: inline-block;
+			text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+		}
+
+		.contador-productos {
+			animation: countPop 0.6s ease-out 0.2s forwards;
+			opacity: 0;
+			transform: scale(0.8);
+		}
+
+		/* Tarjeta de producto */
+		.product-card {
+			background: white;
+			border-radius: var(--border-radius);
+			box-shadow: var(--box-shadow);
+			overflow: hidden;
+			border: 1px solid rgba(0, 0, 0, 0.05);
+			margin-bottom: 2.5rem;
+			animation: fadeInUp 0.5s ease forwards;
+			opacity: 0;
+		}
+
+		.product-header {
+			background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+			color: white;
+			padding: 1.2rem 1.5rem;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		.product-header h3 {
+			margin: 0;
+			font-size: 1.4rem;
+			font-weight: 600;
+		}
+
+		.badge-estado {
+			padding: 0.3rem 1rem;
+			border-radius: 20px;
+			font-weight: 600;
+			font-size: 0.85rem;
+			text-transform: uppercase;
+		}
+
+		.badge-activo {
+			background-color: var(--success-light);
+			color: var(--success-color);
+		}
+
+		.badge-inactivo {
+			background-color: rgba(220, 53, 69, 0.1);
+			color: var(--danger-color);
+		}
+
+		.product-body {
+			padding: 1.8rem;
+		}
+
+		.product-info-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+			gap: 1.5rem;
+		}
+
+		.info-item {
+			background: rgba(26, 58, 143, 0.03);
+			border-radius: 8px;
+			padding: 1.2rem;
+			transition: var(--transition);
+		}
+
+		.info-item:hover {
+			background: rgba(26, 58, 143, 0.06);
+			transform: translateY(-2px);
+		}
+
+		.info-icon {
+			width: 40px;
+			height: 40px;
+			background: rgba(26, 58, 143, 0.1);
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-bottom: 0.8rem;
+			color: var(--primary-color);
+			font-size: 1.2rem;
+		}
+
+		.info-label {
+			font-size: 0.9rem;
+			color: var(--gray-color);
+			font-weight: 500;
+			margin-bottom: 0.5rem;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+		}
+
+		.info-value {
+			font-size: 1.2rem;
+			font-weight: 600;
+			color: var(--primary-color);
+		}
+
+		.precio-producto {
+			color: var(--success-color);
+			font-weight: 600;
+			background-color: var(--success-light);
+			padding: 0.5rem 1rem;
+			border-radius: 8px;
+			display: inline-block;
+		}
+
+		.cantidad-producto {
+			font-weight: 600;
+			background-color: rgba(108, 117, 125, 0.1);
+			padding: 0.5rem 1rem;
+			border-radius: 8px;
+			display: inline-block;
+		}
+
+		/* Formulario de estado */
+		.state-form-container {
+			background: white;
+			border-radius: var(--border-radius);
+			box-shadow: var(--box-shadow);
+			padding: 2rem;
+			margin-bottom: 2rem;
+			animation: fadeInUp 0.5s ease 0.2s forwards;
+			opacity: 0;
+		}
+
+		.form-section-title {
+			font-size: 1.3rem;
+			color: var(--primary-color);
+			margin-bottom: 1.5rem;
+			padding-bottom: 0.8rem;
+			border-bottom: 2px solid #f0f0f0;
+			display: flex;
+			align-items: center;
+			font-weight: 600;
+		}
+
+		.form-section-title i {
+			margin-right: 10px;
+			font-size: 1.2rem;
+		}
+
+		.form-control {
+			border: 1px solid #dce1e6;
+			border-radius: 8px;
+			padding: 0.75rem 1rem;
+			font-size: 1rem;
+			transition: var(--transition);
+			font-weight: 500;
+		}
+
+		.form-control:focus {
+			border-color: var(--primary-color);
+			box-shadow: 0 0 0 0.25rem rgba(26, 58, 143, 0.25);
+		}
+
+		.form-select {
+			background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%231a3a8f' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+			background-position: right 1rem center;
+			background-size: 16px 12px;
+			border: 1px solid #dce1e6;
+			border-radius: 8px;
+			padding: 0.75rem 1rem;
+			font-weight: 500;
+			color: #333;
+		}
+
+		.form-select:focus {
+			border-color: var(--primary-color);
+			box-shadow: 0 0 0 0.25rem rgba(26, 58, 143, 0.25);
+		}
+
+		/* Botones consistentes */
+		.btn-submit {
+			background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+			color: white;
+			border: none;
+			border-radius: 10px;
+			padding: 0.9rem 2.5rem;
+			font-weight: 600;
+			font-size: 1.1rem;
+			transition: var(--transition);
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			gap: 8px;
+			min-width: 200px;
+			animation: fadeInScale 0.5s ease-out 0.5s forwards;
+			opacity: 0;
+			transform: scale(0.9);
+			border: 2px solid transparent;
+		}
+
+		.btn-submit:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 4px 12px rgba(26, 58, 143, 0.3);
+			color: white;
+			background: linear-gradient(135deg, #15307a 0%, #1a3a8f 100%);
+		}
+
+		.btn-cancel {
+			background: linear-gradient(135deg, var(--gray-color) 0%, var(--gray-dark) 100%);
+			color: white;
+			border: none;
+			border-radius: 10px;
+			padding: 0.9rem 2rem;
+			font-weight: 600;
+			font-size: 1rem;
+			transition: var(--transition);
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			gap: 8px;
+			text-decoration: none;
+			min-width: 150px;
+			animation: fadeInScale 0.5s ease-out 0.4s forwards;
+			opacity: 0;
+			transform: scale(0.9);
+			border: 2px solid transparent;
+		}
+
+		.btn-cancel:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+			color: white;
+			background: linear-gradient(135deg, #5a6268 0%, #545b62 100%);
+		}
+
+		/* Alerta de advertencia */
+		.alert-warning-custom {
+			background: #fff9e6;
+			border-left: 4px solid var(--warning-color);
+			border-radius: 8px;
+			padding: 1.2rem 1.5rem;
+			margin-bottom: 2rem;
+			animation: fadeInUp 0.5s ease 0.1s forwards;
+			opacity: 0;
+		}
+
+		.alert-warning-custom i {
+			color: var(--warning-color);
+			margin-right: 10px;
+			font-size: 1.3rem;
+		}
+
+		/* Descripción del producto */
+		.descripcion-producto {
+			background: rgba(26, 58, 143, 0.03);
+			border-radius: 8px;
+			padding: 1.2rem;
+			margin-top: 1rem;
+			line-height: 1.6;
+			color: #333;
+		}
+
+		/* Responsive */
+		@media (max-width: 768px) {
+			.product-info-grid {
+				grid-template-columns: 1fr;
+			}
+
+			.product-header {
+				flex-direction: column;
+				align-items: flex-start;
+				gap: 1rem;
+			}
+
+			.product-header h3 {
+				font-size: 1.2rem;
+			}
+
+			.state-form-container {
+				padding: 1.5rem;
+			}
+
+			.btn-submit,
+			.btn-cancel {
+				min-width: 100%;
+				margin-bottom: 0.5rem;
+			}
+
+			.btn-container {
+				flex-direction: column;
+			}
+		}
+
+		@media (max-width: 992px) {
+
+			.product-card,
+			.state-form-container,
+			.alert-warning-custom {
+				margin-left: 1rem;
+				margin-right: 1rem;
+			}
+		}
+
+		.btn-container {
+			display: flex;
+			justify-content: center;
+			gap: 1rem;
+			margin-top: 2rem;
+			flex-wrap: wrap;
+		}
+
+		.descripcion-label {
+			font-size: 0.9rem;
+			color: var(--gray-color);
+			font-weight: 500;
+			margin-bottom: 0.5rem;
+			display: block;
+		}
+
+		.hidden-fields {
+			display: none;
+		}
+	</style>
 </head>
-	<body><!-- En la vista insertar, creamos 4 inputs que nos van
-			   llevar la información registrada hasta la base de datos,
-		   	   usando como referencia el nombre de cada uno de los
-		       atributos del objeto. -->
-	<div th:insert = "~{header}"></div>
+
+<body>
+<div th:insert="~{header}"></div>
+
+<div class="productos-container">
 	<div class="container">
-		<h1>Activar o desactivar: <span th:text="${producto.get().nombre}"></span> </h1>
-		<br>
-		<form th:action="@{/Producto/guardarProducto}" th:object=${producto} method="POST">
-			<div class="card text-bg-danger mb-3" style="max-width: 18rem; margin-left: 37%;">
-			  <div class="card-header"><span th:text="${producto.get().nombre}"></span></div>
-			  <div class="card-body">
-			    <p class="card-text">Precio por unidad: <span th:text="${producto.get().precio}"></span></p>
-				<p class="card-text">Cantidad: <span th:text="${producto.get().cantidad} + Unidades"></span></p>
-				<p class="card-text">Descripción: <span th:text="${producto.get().descripcion}"></span></p>
-			  </div>
-			 </div>
-			<div class="row">
-				<div class="col-md-6">	
-					<input 	th:field="*{id}" type="hidden"> <!-- Este input será oculto y solo se usará para obtener la información del ID, para asignar la nueva data a ese ID	-->
-					<input 	th:field="*{nombre}" type="hidden" name="nombre" id="nombre" class="form-control" required>
-				</div>
-				<div class="col-md-6">
-					<input th:field="*{descripcion}" type="hidden" name="descripcion" class="form-control" required>
-				</div>				
+		<!-- Encabezado -->
+		<div
+				class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
+			<div>
+				<h1 class="titulo-principal">
+					<i class="bi bi-toggle-on me-2"></i>Cambiar Estado del Producto
+				</h1>
 			</div>
-			<br>
-			<div class="row">
-				<div class="col-md-3">	
-					<input 	th:field="*{cantidad}" type="hidden" name="cantidad" id="cantidad" class="form-control" required>
+			<div class="mt-3 mt-md-0">
+                    <span class="badge bg-primary rounded-pill p-2 px-3 contador-productos">
+                        <i class="bi bi-box me-1"></i>
+                        ID: <span th:text="${producto.get().id}">0</span>
+                    </span>
+			</div>
+		</div>
+
+		<!-- Alerta informativa -->
+		<div class="alert-warning-custom">
+			<div class="d-flex align-items-center">
+				<i class="bi bi-exclamation-triangle-fill"></i>
+				<div>
+					<h5 class="alert-heading mb-1">Cambio de estado del producto</h5>
+					<p class="mb-0">Los productos inactivos no estarán disponibles para la venta en el sistema
+						5GPOS.</p>
 				</div>
-				<div class="col-md-3">	
-					<input 	th:field="*{fecha}" type="hidden" name="fecha" id="fecha" class="form-control" required>
-				</div>	
-				<div class="col-md-3">	
-					<input 	th:field="*{precio}" type="hidden" name="precio" id="precio" class="form-control" required>
+			</div>
+		</div>
+
+		<!-- Tarjeta de información del producto -->
+		<div class="product-card">
+			<div class="product-header">
+				<h3><i class="bi bi-box-seam me-2"></i><span th:text="${producto.get().nombre}"></span></h3>
+				<span class="badge-estado"
+					  th:classappend="${producto.get().estado == 'ACTIVO'} ? 'badge-activo' : 'badge-inactivo'"
+					  th:text="${producto.get().estado}">
+                    </span>
+			</div>
+			<div class="product-body">
+				<div class="product-info-grid">
+					<div class="info-item">
+						<div class="info-icon">
+							<i class="bi bi-tag"></i>
+						</div>
+						<div class="info-label">Precio por unidad</div>
+						<div class="precio-producto">$<span th:text="${producto.get().precio}"></span></div>
+					</div>
+
+					<div class="info-item">
+						<div class="info-icon">
+							<i class="bi bi-boxes"></i>
+						</div>
+						<div class="info-label">Cantidad en stock</div>
+						<div class="cantidad-producto"><span th:text="${producto.get().cantidad}"></span> unidades
+						</div>
+					</div>
+
+					<div class="info-item">
+						<div class="info-icon">
+							<i class="bi bi-calendar"></i>
+						</div>
+						<div class="info-label">Fecha de registro</div>
+						<div class="info-value" th:text="${producto.get().fecha}"></div>
+					</div>
+
+					<div class="info-item">
+						<div class="info-icon">
+							<i class="bi bi-truck"></i>
+						</div>
+						<div class="info-label">Proveedor</div>
+						<div class="info-value" th:text="${producto.get().proveedor.nombre}"></div>
+					</div>
 				</div>
-				<div class="col-md-3" hidden>
-					<label>Seleccione el proveedor</label>
+
+				<!-- Descripción -->
+				<div class="mt-4">
+					<div class="descripcion-label"><i class="bi bi-card-text me-1"></i>Descripción del producto
+					</div>
+					<div class="descripcion-producto">
+						<span th:text="${producto.get().descripcion}"></span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Formulario para cambiar estado -->
+		<div class="state-form-container">
+			<h3 class="form-section-title"><i class="bi bi-sliders"></i> Configurar estado del producto</h3>
+
+			<form th:action="@{/Producto/guardarProducto}" th:object="${producto}" method="POST">
+				<!-- Campos ocultos (sin cambios en la lógica) -->
+				<div class="hidden-fields">
+					<input th:field="*{id}" type="hidden">
+					<input th:field="*{nombre}" type="hidden" name="nombre" id="nombre" class="form-control"
+						   required>
+					<input th:field="*{descripcion}" type="hidden" name="descripcion" class="form-control" required>
+					<input th:field="*{cantidad}" type="hidden" name="cantidad" id="cantidad" class="form-control"
+						   required>
+					<input th:field="*{fecha}" type="hidden" name="fecha" id="fecha" class="form-control" required>
+					<input th:field="*{precio}" type="hidden" name="precio" id="precio" class="form-control"
+						   required>
 					<select class="form-control" th:field="*{proveedor}" id="estado" name="estado">
-						<option th:each="proveedor: ${proveedor}" th:value="${proveedor.id}" th:text="${proveedor.nombre}"></option>					
+						<option th:each="proveedor: ${proveedor}" th:value="${proveedor.id}"
+								th:text="${proveedor.nombre}"></option>
 					</select>
 				</div>
-				<div class="col-md-3" style="margin-left: 36%;">
-					<label>Seleccione el estado del producto</label> 
-						<select class="form-control" th:field="*{estado}" required>
-							<option value="ACTIVO">Activo</option>	
-							<option value="INACTIVO">Inactivo</option>										
-						</select> 
+
+				<!-- Campo de estado (visible) -->
+				<div class="mb-4">
+					<label for="estadoSelect" class="form-label fw-semibold mb-2">
+						<i class="bi bi-toggle-on me-1"></i>Estado actual del producto
+					</label>
+					<select class="form-select" th:field="*{estado}" id="estadoSelect" required>
+						<option value="ACTIVO">✅ Activo - Disponible para venta</option>
+						<option value="INACTIVO">⛔ Inactivo - No disponible para venta</option>
+					</select>
+					<div class="form-text mt-2">
+						<i class="bi bi-info-circle me-1"></i> Seleccione el estado deseado para este producto en el
+						sistema.
+					</div>
 				</div>
-			</div>					
-			<br><br>
-				<div style="margin-left: 43%;"><input type="submit" class="btn btn-success" name="guardarestado" id="guardarestado" value="Guardar estado"></div>	 
-		</form>
+
+				<!-- Botones -->
+				<div class="btn-container">
+					<a th:href="@{/Producto/listadoProducto}" class="btn-cancel">
+						<i class="bi bi-arrow-left me-1"></i> Cancelar
+					</a>
+					<button type="submit" class="btn-submit" name="guardarestado" id="guardarestado">
+						<i class="bi bi-check-circle me-1"></i> Guardar cambios
+					</button>
+				</div>
+			</form>
 		</div>
-		<div th:insert = "~{footer}"></div>
-	</body>
-	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
-	</html>
+	</div>
+</div>
+
+<div th:insert="~{footer}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+		integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
+		crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"
+		integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V"
+		crossorigin="anonymous"></script>
+
+<script>
+	// Script para mejorar la interactividad
+	document.addEventListener('DOMContentLoaded', function () {
+		// Cambiar estilo del select según la opción seleccionada
+		const estadoSelect = document.getElementById('estadoSelect');
+
+		function updateSelectStyle() {
+			if (estadoSelect.value === 'ACTIVO') {
+				estadoSelect.style.borderLeft = '4px solid #28a745';
+				estadoSelect.style.backgroundColor = 'rgba(40, 167, 69, 0.05)';
+			} else {
+				estadoSelect.style.borderLeft = '4px solid #dc3545';
+				estadoSelect.style.backgroundColor = 'rgba(220, 53, 69, 0.05)';
+			}
+		}
+
+		// Aplicar estilo inicial
+		updateSelectStyle();
+
+		// Actualizar estilo cuando cambia la selección
+		estadoSelect.addEventListener('change', updateSelectStyle);
+
+		// Efecto visual al enviar el formulario
+		const form = document.querySelector('form');
+		const submitBtn = document.getElementById('guardarestado');
+
+		form.addEventListener('submit', function (e) {
+			submitBtn.innerHTML = '<i class="bi bi-arrow-clockwise me-1"></i> Guardando...';
+			submitBtn.disabled = true;
+			submitBtn.style.opacity = '0.8';
+		});
+
+		// Animar elementos al cargar
+		setTimeout(() => {
+			document.querySelector('.product-card').style.animation = 'fadeInUp 0.5s ease forwards';
+			document.querySelector('.alert-warning-custom').style.animation = 'fadeInUp 0.5s ease 0.1s forwards';
+			document.querySelector('.state-form-container').style.animation = 'fadeInUp 0.5s ease 0.2s forwards';
+		}, 100);
+	});
+</script>
+</body>
+
+</html>
